@@ -1,0 +1,10 @@
+{
+  "name": "Shmit Chat",
+  "description": "Shmit Chat",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.0.2",
+    "socket.io": "0.9.11"
+  }
+}

@@ -1,0 +1,24 @@
+.chat li {
+	list-style: none;
+}
+
+.chat ul {
+	padding: 0;
+}
+
+.user {
+	margin-right: 1em;
+	font-weight: bold;
+}
+
+.user:after {
+	content: ':';
+}
+
+.chat .message:nth-child(even) {
+	background-color: #eee;
+}
+
+.chat .message:nth-child(odd) {
+	background-color: #ccc;
+}

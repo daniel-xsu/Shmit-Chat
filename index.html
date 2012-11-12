@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>socket.io test</title>
+
+	<script src="socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect('http://localhost');
+
+  socket.on('chat', function (data) {
+  	
+  	var message = document.createElement('li');
+  	$(message).addClass('message');
+  	$(message).append( '<span class="user">' + data.header.user + '</span>' );
+  	$(message).append( '<span class="body">' + data.body + '</span>' );
+
+
+
+	$('.chat ul').append( message );
+  });
+
+</script>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('form').submit(function(e){
+		e.preventDefault();
+
+		console.log( 'sending chat...' );
+		
+		var username = $('input.user', this).val();
+
+		if (! username) {
+			username = 'Anonymous';
+		}
+
+		socket.emit('chat', {
+			body: $('input.body', this).val(),
+			header: {user: username }
+		});
+
+		$('.body', this).val('');
+
+		return false;
+	});
+});
+
+
+
+</script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+	
+
+	<div class="chat">
+		<ul>
+		</ul>
+
+
+	</div>
+
+
+<form action="" class="">
+	<input type="text" class="user" placeholder="Username" />
+	<input type="text" class="body" placeholder="Message" />
+	<button type="submit" name="submit">Ok send it or whatever</button>
+</form>
+
+
+</body>
+</html>
