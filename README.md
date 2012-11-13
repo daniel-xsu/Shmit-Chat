@@ -19,3 +19,4 @@ To-do
 * Google/Twitter/Facebook/OpenID authentication
 * Which transport method is Chrome using? (It should be WebSockets!)
   * Why does Chrome keep looking at /socket.io/1/?t=1352759955569 ?
+* Prevent desktop notifications from being sent if you're already viewing the page

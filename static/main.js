@@ -22,20 +22,28 @@ var createAudio = function(){
 	source_ogg.src = '/alert.ogg';
 
 	audio.volume = 0;
-	audio.play();
+	if( audio.play ) {
+		audio.play();
+	}
 }
 
 window.onload = createAudio;
 
 	function playSound(){
 		audio.volume = 1;
-		audio.play();
+		if( audio.play ) {
+			audio.play();
+		}
 	}
 
 	function notify( data ){
+		if( ! window.webkitNotifications ) {
+			return false;
+		}
+		
 		var n;
 		//webkitNotifications
-		if (window.webkitNotifications.checkPermission() != 0) {
+		if ( window.webkitNotifications.checkPermission() != 0 ) {
 			// alert('Please allow notifications by clicking that link');
 			
 			// document.getElementById('allowNotificationLink').style.backgroundColor = 'Red';
@@ -72,7 +80,6 @@ window.onload = createAudio;
 // }
 
 	function announcementsListener(data) {
-		console.log(data);
 		$('.users ul li').remove();
 		$.each(data.users, function(k, v){
 			$('.users ul').append( '<li>' + v + '</li>' );
@@ -150,7 +157,7 @@ $(document).ready(function(){
 		return false;
 	});
 
-	if( window.webkitNotifications.requestPermission && window.webkitNotifications.checkPermission() != 0 ){
+	if( window.webkitNotifications && window.webkitNotifications.requestPermission && window.webkitNotifications.checkPermission() != 0 ){
 		$('.controls').append( '<button type="button" class="enable-notifications" title="Enable desktop notifications">Enable desktop notifications</button>' );
 		$('.enable-notifications').click(function(){
 			setAllowNotification();
