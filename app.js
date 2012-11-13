@@ -15,13 +15,8 @@ app.get('/', function (req, res) {
 io.sockets.on('connection', function (socket) {
   // socket.emit('news', { hello: 'world' });
   socket.on('chat', function (data) {
-<<<<<<< HEAD
     console.log(data);
     channel = data.header.channel;
     io.sockets.emit(channel, data);
-=======
-    // console.log(data);
-     io.sockets.emit('chat', data);
->>>>>>> 78cce4ac36ff5c5790c024b9325d869be10f1693
   });
 });
