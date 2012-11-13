@@ -12,15 +12,10 @@ Shmit Chat uses the following libraries:
 
 To-do
 --------
-* Save username to cookie or localstorage something
-* Different colors for different people (Choose your own color!)
-* Disable JavaScript
-* Different chat rooms for different URLs
-* Show last ten messages when logging in
 * Show list of connected users
+* Prevent clients from sending JavaScript
+* Different colors for different people (Choose your own color?)
+* Show last ten messages when logging in
 * Google/Twitter/Facebook/OpenID authentication
-* Notification sounds http://www.schillmania.com/projects/soundmanager2/
-* Desktop notifications: http://developer.chrome.com/extensions/notifications.html
-  * http://www.210computing.com/google/chrome_notifications.html
 * Which transport method is Chrome using? (It should be WebSockets!)
   * Why does Chrome keep looking at /socket.io/1/?t=1352759955569 ?
