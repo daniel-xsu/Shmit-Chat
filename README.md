@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Shmit Chat
 ========
 
@@ -25,7 +24,3 @@ To-do
   * http://www.210computing.com/google/chrome_notifications.html
 * Which transport method is Chrome using? (It should be WebSockets!)
   * Why does Chrome keep looking at /socket.io/1/?t=1352759955569 ?
-=======
-Shmit-Chat
-==========
->>>>>>> 78cce4ac36ff5c5790c024b9325d869be10f1693
