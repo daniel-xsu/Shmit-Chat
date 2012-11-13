@@ -2,31 +2,35 @@
 <html lang="en-US">
 <head>
 	<meta charset="UTF-8">
-	<title>socket.io test</title>
+	<title>Shmit Chat</title>
 	<meta name="viewport" content="width=device-width" />
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-
 	<script type="text/javascript" src="/main.js"></script>
-
-	<link rel="stylesheet" href="style.css" />	
-
+	<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-	
+<div id="page">
 
 	<div class="chat">
 		<ul>
 		</ul>
 	</div>
 
-
-<form action="" class="">
-	<input type="text" class="user" placeholder="Username" />
-	<input type="text" class="body" placeholder="Message" />
-	<button type="submit" name="submit">Ok send it or whatever</button>
+<form action="" class="controls">
+	<input type="text" class="user" placeholder="Your Name" />
+	<input type="text" class="body" placeholder="Type your message here..." autofocus />
+	<button type="submit" class="send" title="Send">&#x25B6;</button>
 </form>
 
+<div class="users">
+	<ul>
+		<li>Joe</li>
+		<li>Someone else</li>
+		<li>A guy</li>
+	</ul>
+</div>
 
+</div>
 </body>
 </html>

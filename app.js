@@ -14,9 +14,34 @@ app.get('/', function (req, res) {
 
 io.sockets.on('connection', function (socket) {
   // socket.emit('news', { hello: 'world' });
-  socket.on('chat', function (data) {
-    console.log(data);
-    channel = data.header.channel;
-    io.sockets.emit(channel, data);
-  });
+  // console.log( socket );
+
+
+	socket.on('chat', function (data) {
+		// console.log(data);
+		data.header.timestamp = new Date().toJSON();
+		channel = data.header.channel;
+		io.sockets.emit(channel, data);
+
+		socket.emit('room', { users: users });
+
+	});
+
+	users = {};
+	socket.on('login', function (data) {
+		
+		console.log( '*** Raw login data! ***' );
+		console.log( data );
+		data.header = '';
+		// data.header.timestamp = new Date().toJSON();
+		channel = data.channel;
+		// io.sockets.emit(channel, data);
+		
+		users[socket.id] = data.user;
+		console.log('*** The list of users ***');
+		console.log(users);
+		socket.emit( 'announcements', { channel: channel, users: users } );
+
+	});
+
 });

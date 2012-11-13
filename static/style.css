@@ -1,8 +1,42 @@
+/* apply a natural box layout model to all elements */
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+html, body, #page {
+	display: block;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+body {
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-size: 1.5em;
+}
+
+#page {
+   min-height: 100%;
+   height: 100%;
+   position: relative;
+   padding-bottom: 60px;
+}
+
+.chat {
+	overflow: auto;
+	max-height: 100%;
+}
+
+.chat ul {
+	padding: 0;
+	margin: 0;
+}
+
 .chat li {
 	list-style: none;
 }
 
-.chat ul {
+input {
+	font-size: 0.8em;
+	margin: 0;
 	padding: 0;
 }
 
@@ -11,8 +45,45 @@
 	font-weight: bold;
 }
 
-.user:after {
+.controls {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+}
+
+.body {
+	display: block;
+	width: 100%;
+	padding: 0.2em;
+	min-height: 100%;
+}
+
+button {
+	cursor: pointer;
+}
+
+.enable-notifications {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.send {
+	display: block;
+	width: 34px;
+	height: 34px;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+/*.user:after {
 	content: ':';
+}*/
+
+.chat .message {
+	padding: 0.2em 0.4em;
 }
 
 .chat .message:nth-child(even) {
@@ -21,4 +92,19 @@
 
 .chat .message:nth-child(odd) {
 	background-color: #ccc;
+}
+
+.users {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: rgba(255, 255, 255, 0.5);
+	border: 1px solid;
+	font-size: 0.5em;
+}
+
+.users ul {
+	margin: 0;
+	padding: 0.2em;
+	padding-left: 1.6em;
 }
