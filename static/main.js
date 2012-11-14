@@ -121,9 +121,10 @@ window.onload = createAudio;
 
 
 	function announcementsListener(data) {
+		console.log( data );
 		$('.users ul li').remove();
-		$.each(data.users, function(k, v){
-			$('.users ul').append( '<li>' + v + '</li>' );
+		$.each(data, function(k, v){
+			$('.users ul').append( '<li>' + v.username + '</li>' );
 		});
 		
 	}
@@ -158,11 +159,11 @@ window.onload = createAudio;
 		socket.removeAllListeners();
   		socket.on(channel, chatListener );
   		socket.on('announcements', announcementsListener );
-		var user = localStorage.getItem('name');
-		if( ! user ){
-			user = 'Anonymous';
+		var username = localStorage.getItem('name');
+		if( ! username ){
+			username = 'Anonymous';
 		}
-		socket.emit('login', { user: user, channel: channel} );
+		socket.emit('login', { username: username, channel: channel} );
 
 	}
 
@@ -182,7 +183,10 @@ $(document).ready(function(){
 	
 
 	$('.user').blur(function(){
-		window.localStorage.setItem( 'name', $(this).val() );
+		var username = $(this).val();
+		window.localStorage.setItem( 'name', username );
+		// console.log( username );
+		socket.emit('updateuser', { username: username, channel: channel} );
 	});
 
 	$('form').submit(function(e){

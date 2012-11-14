@@ -1,11 +1,12 @@
 {
   "name": "ShmitChat",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Shmit Chat is a tiny chat application",
   "main": "app.js",
   "dependencies": {
     "express": "~3.0.3",
-    "socket.io": "~0.9.11"
+    "socket.io": "~0.9.11",
+    "mongodb": "~1.1.11"
   },
   "devDependencies": {},
   "repository": {
