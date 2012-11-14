@@ -1,6 +1,6 @@
 {
   "name": "ShmitChat",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Shmit Chat is a tiny chat application",
   "main": "app.js",
   "dependencies": {

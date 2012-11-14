@@ -29,42 +29,40 @@ var createAudio = function(){
 
 window.onload = createAudio;
 
-	function playSound(){
-		audio.volume = 1;
-		if( audio.play ) {
-			audio.play();
-		}
+function playSound(){
+	audio.volume = 1;
+	if( audio.play ) {
+		audio.play();
 	}
+}
 
-	function notify( title, message, timestamp ){
-		if( ! window.webkitNotifications ) {
-			return false;
-		}
+function notify( title, message, timestamp ){
+	if( ! window.webkitNotifications ) {
+		return false;
+	}
+	
+	var n;
+	//webkitNotifications
+	if ( window.webkitNotifications.checkPermission() != 0 ) {
+		// alert('Please allow notifications by clicking that link');
 		
-		var n;
-		//webkitNotifications
-		if ( window.webkitNotifications.checkPermission() != 0 ) {
-			// alert('Please allow notifications by clicking that link');
-			
-			// document.getElementById('allowNotificationLink').style.backgroundColor = 'Red';
-			setAllowNotification();
-
-			return 0;
-		}
-
-		n = window.webkitNotifications.createNotification('/favicon.ico', title, message);
-		n.onclick = function(){
-			window.focus();
-			$('.controls .body').focus();
-		};
-		n.show();
-
+		// document.getElementById('allowNotificationLink').style.backgroundColor = 'Red';
+		setAllowNotification();
+		return 0;
 	}
 
-	function padTime(n){
-		return ("0" + n).slice (-2);
-	}
+	n = window.webkitNotifications.createNotification('/favicon.ico', title, message);
+	n.onclick = function(){
+		window.focus();
+		$('.controls .body').focus();
+	};
+	n.show();
 
+}
+
+function padTime(n){
+	return ("0" + n).slice (-2);
+}
 
 // http://stackoverflow.com/a/8888498/1027770
 // function formatAMPM(date) {
@@ -147,18 +145,13 @@ function addMessage( username, body, timestamp, type ) {
 
   	}
 
-
-  	console.log( message );
   	playSound();
 
 	$('.chat ul').append( message );
 	$('.chat')[0].scrollTop = $('.chat')[0].scrollHeight;
 }
 
-  function chatListener(data) {
-
-  	
-
+function chatListener(data) {
 	if (data.type == 'userupdate') {
 		$('.users ul li').remove();
 		$.each(data.users, function(k, v){
@@ -174,56 +167,50 @@ function addMessage( username, body, timestamp, type ) {
 	if (data.type == 'message') {
 		addMessage( data.header.username, data.body, data.header.timestamp, 'message' );
 	}
-  	
-  }
+	
+}
 
-	function connect(){
+function connect(){
+	socket = io.connect('/');
+	channel = window.location.hash;
 
-
-		socket = io.connect('/');
-		channel = window.location.hash;
-
-		// console.log( channel );
-
-		if( ! channel || channel == '#' ) {
-			channel = '#main';
-		}
-
-		socket.removeAllListeners();
-  		socket.on(channel, chatListener );
-  		// socket.on('announcements', announcementsListener );
-		var username = localStorage.getItem('name');
-		if( ! username ){
-			username = 'Anonymous';
-		}
-		socket.emit('login', { username: username, channel: channel} );
+	if( ! channel || channel == '#' ) {
+		channel = '#main';
 	}
 
-	window.onhashchange = function(e){
-		console.log('hash changed');
-		$('.chat ul').empty();
+	socket.removeAllListeners();
+		socket.on(channel, chatListener );
+		// socket.on('announcements', announcementsListener );
+	var username = localStorage.getItem('name');
+	if( ! username ){
+		username = 'Anonymous';
+	}
+	socket.emit('login', { username: username, channel: channel} );
+}
 
-		var oldChannel = e.oldURL.substring(e.oldURL.indexOf('#'));
-		var newChannel = e.newURL.substring(e.newURL.indexOf('#'));
-		channel = e.newURL.substring(e.newURL.indexOf('#'));
+window.onhashchange = function(e){
 
-		if( ! newChannel || newChannel == '#' ) {
-			newChannel = '#main';
-		}
+	$('.chat ul').empty();
 
-		if( ! oldChannel || oldChannel == '#' ) {
-			oldChannel = '#main';
-		}
+	var oldChannel = e.oldURL.substring(e.oldURL.indexOf('#'));
+	var newChannel = e.newURL.substring(e.newURL.indexOf('#'));
+	channel = e.newURL.substring(e.newURL.indexOf('#'));
 
-		socket.removeAllListeners();
-  		socket.on(newChannel, chatListener );
-
-		socket.emit('changechannel', { oldChannel: oldChannel, newChannel: newChannel } );
-
-
+	if( ! newChannel || newChannel == '#' ) {
+		newChannel = '#main';
 	}
 
-	connect();
+	if( ! oldChannel || oldChannel == '#' ) {
+		oldChannel = '#main';
+	}
+
+	socket.removeAllListeners();
+		socket.on(newChannel, chatListener );
+
+	socket.emit('changechannel', { oldChannel: oldChannel, newChannel: newChannel } );
+}
+
+connect();
 
 $(document).ready(function(){
 	document.body.onclick = createAudio;
@@ -235,7 +222,6 @@ $(document).ready(function(){
 	$('.user').blur(function(){
 		var username = $(this).val();
 		window.localStorage.setItem( 'name', username );
-		// console.log( username );
 		socket.emit('updateuser', { username: username, channel: channel} );
 	});
 
@@ -265,6 +251,4 @@ $(document).ready(function(){
 			setAllowNotification();
 		});
 	}
-
-	
 });

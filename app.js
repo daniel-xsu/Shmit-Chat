@@ -12,8 +12,6 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
-
-
 var mongo = require('mongodb'),
   Server = mongo.Server,
   Db = mongo.Db;
@@ -24,50 +22,36 @@ var db = new Db('shmitchat', server);
 db.open(function(err, db) {
   if(!err) {
     // console.log("We are connected");
-  
 
 db.collection('active_users', function(err, collection) {
-		collection.drop();
-	});
+	collection.drop();
+});
 
 io.sockets.on('connection', function (socket) {
 
 console.log( 'Someone connected: ' + socket.id + ' connected!' );
 
 function getUsers( channel ) {
-
 	db.collection('active_users', function(err, collection) {
-
 		collection.find({channel: channel}).toArray(function(err, items) {
-			
 			io.sockets.emit( channel, { body: '', type: 'userupdate', users: items } );
-
 		});
-
     });
-
-
 }
 
 function addUser( socketid, channel, username ){
 	db.collection('active_users', function(err, collection) {
-
 		collection.insert( { channel: channel, username: username, socketid: socketid } );
-
 	});
 }
 
 function updateUser( socketid, channel, username ){
 	db.collection('active_users', function(err, collection) {
-
 		collection.update( { socketid: socketid, channel: channel }, {$set:{username: username}}, function(err, result){
 			getUsers( channel );
 		} );
-
 	});
 }
-
-
 
 function removeUser( socketid ){
 	db.collection('active_users', function(err, collection) {
@@ -81,15 +65,12 @@ function removeUser( socketid ){
 
 function changeChannel( socketid, oldChannel, newChannel ){
 	db.collection('active_users', function(err, collection) {
-
 		collection.update( { socketid: socketid }, {$set:{channel: newChannel}}, function(err, result){
 			getUsers( newChannel );
 			getUsers( oldChannel );
 		} );
 
 	});
-
-
 }
 
 	socket.on('chat', function (data) {
