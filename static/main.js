@@ -36,7 +36,7 @@ window.onload = createAudio;
 		}
 	}
 
-	function notify( data ){
+	function notify( title, message, timestamp ){
 		if( ! window.webkitNotifications ) {
 			return false;
 		}
@@ -52,14 +52,10 @@ window.onload = createAudio;
 			return 0;
 		}
 
-		var user = data.header.user;
-		var body = data.body;
-		if(! user){
-			user = 'Someone';
-		}
-		n = window.webkitNotifications.createNotification('/favicon.ico', user + ' IM\'d you!', body);
+		n = window.webkitNotifications.createNotification('/favicon.ico', title, message);
 		n.onclick = function(){
 			window.focus();
+			$('.controls .body').focus();
 		};
 		n.show();
 
@@ -117,59 +113,113 @@ window.onload = createAudio;
     }
 })();
 
-
-
-
-	function announcementsListener(data) {
-		console.log( data );
-		$('.users ul li').remove();
-		$.each(data, function(k, v){
-			$('.users ul').append( '<li>' + v.username + '</li>' );
-		});
-		
-	}
-
-  function chatListener(data) {
-  	var message = document.createElement('li');
-  	$(message).addClass('message');
-  	var time = new Date( data.header.timestamp );
+function addMessage( username, body, timestamp, type ) {
+	var message = document.createElement('li');
+  	
+  	var time = new Date( timestamp );
   	var hour = padTime( time.getHours() );
   	var minute = padTime( time.getMinutes() );
   	var second = padTime( time.getSeconds() );
 
   	$(message).prop('title', hour + ':' + minute + ':' + second );
-  	$(message).append( '<span class="user">' + data.header.user + '</span>' );
-  	$(message).append( '<span class="body">' + data.body + '</span>' );
-  	playSound();
 
+
+  	if( type == 'message' ) {
+  		$(message).addClass('message');
+	  	$(message).append( '<span class="user">' + username + '</span>' );
+	  	$(message).append( '<span class="body">' + body + '</span>' );
+
+	  	if( $( document.body ).hasClass('hidden') ){
+	  		var title = username + ' IM\'d you!';
+		  	notify( title, body, timestamp );
+	  	} 	
+  	}
+
+  	if( type == 'announcement' ) {
+  		$(message).addClass('announcement');
+	  	// $(message).append( '<span class="user">' + username + '</span>' );
+	  	$(message).append( '<span class="body">' + body + '</span>' );
 
   	if( $( document.body ).hasClass('hidden') ){
-	  	notify( data );
+  		var title = body;
+	  	notify( title, '', timestamp );
+  	}
+
   	}
 
 
+  	console.log( message );
+  	playSound();
+
 	$('.chat ul').append( message );
 	$('.chat')[0].scrollTop = $('.chat')[0].scrollHeight;
+}
+
+  function chatListener(data) {
+
+  	
+
+	if (data.type == 'userupdate') {
+		$('.users ul li').remove();
+		$.each(data.users, function(k, v){
+			$('.users ul').append( '<li>' + v.username + '</li>' );
+		});
+	}
+
+	if (data.type == 'announcement') {
+		// Add announcement to chat dialogue
+		addMessage( 'Server', data.body, data.header.timestamp, 'announcement' );
+	}
+
+	if (data.type == 'message') {
+		addMessage( data.header.username, data.body, data.header.timestamp, 'message' );
+	}
+  	
   }
 
 	function connect(){
+
+
 		socket = io.connect('/');
 		channel = window.location.hash;
 
+		// console.log( channel );
+
+		if( ! channel || channel == '#' ) {
+			channel = '#main';
+		}
+
 		socket.removeAllListeners();
   		socket.on(channel, chatListener );
-  		socket.on('announcements', announcementsListener );
+  		// socket.on('announcements', announcementsListener );
 		var username = localStorage.getItem('name');
 		if( ! username ){
 			username = 'Anonymous';
 		}
 		socket.emit('login', { username: username, channel: channel} );
-
 	}
 
-	window.onhashchange = function(){
+	window.onhashchange = function(e){
+		console.log('hash changed');
 		$('.chat ul').empty();
-		connect();
+
+		var oldChannel = e.oldURL.substring(e.oldURL.indexOf('#'));
+		var newChannel = e.newURL.substring(e.newURL.indexOf('#'));
+		channel = e.newURL.substring(e.newURL.indexOf('#'));
+
+		if( ! newChannel || newChannel == '#' ) {
+			newChannel = '#main';
+		}
+
+		if( ! oldChannel || oldChannel == '#' ) {
+			oldChannel = '#main';
+		}
+
+		socket.removeAllListeners();
+  		socket.on(newChannel, chatListener );
+
+		socket.emit('changechannel', { oldChannel: oldChannel, newChannel: newChannel } );
+
 
 	}
 
@@ -179,7 +229,7 @@ $(document).ready(function(){
 	document.body.onclick = createAudio;
 
 	var name = window.localStorage.getItem( 'name' );
-	$('.user').val( name );
+	$('.controls .user').val( name );
 	
 
 	$('.user').blur(function(){
@@ -201,7 +251,7 @@ $(document).ready(function(){
 
 		socket.emit('chat', {
 			body: $('input.body', this).val(),
-			header: { user: username, channel: channel }
+			header: { username: username, channel: channel }
 		});
 
 		$('.body', this).val('');
