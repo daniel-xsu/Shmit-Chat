@@ -58,6 +58,9 @@ window.onload = createAudio;
 			user = 'Someone';
 		}
 		n = window.webkitNotifications.createNotification('/favicon.ico', user + ' IM\'d you!', body);
+		n.onclick = function(){
+			window.focus();
+		};
 		n.show();
 
 	}
@@ -79,6 +82,44 @@ window.onload = createAudio;
 //   return strTime;
 // }
 
+(function() {
+	// http://stackoverflow.com/a/1060034/1027770
+    var hidden, change, vis = {
+            hidden: "visibilitychange",
+            mozHidden: "mozvisibilitychange",
+            webkitHidden: "webkitvisibilitychange",
+            msHidden: "msvisibilitychange",
+            oHidden: "ovisibilitychange" /* not currently supported */
+        };             
+    for (hidden in vis) {
+        if (vis.hasOwnProperty(hidden) && hidden in document) {
+            change = vis[hidden];
+            break;
+        }
+    }
+    if (change)
+        document.addEventListener(change, onchange);
+    else if (/*@cc_on!@*/false) // IE 9 and lower
+        document.onfocusin = document.onfocusout = onchange
+    else
+        window.onfocus = window.onblur = onchange;
+
+    function onchange (evt) {
+        var body = document.body;
+        evt = evt || window.event;
+
+        if (evt.type == "focus" || evt.type == "focusin")
+            body.className = "visible";
+        else if (evt.type == "blur" || evt.type == "focusout")
+            body.className = "hidden";
+        else        
+            body.className = this[hidden] ? "hidden" : "visible";
+    }
+})();
+
+
+
+
 	function announcementsListener(data) {
 		$('.users ul li').remove();
 		$.each(data.users, function(k, v){
@@ -99,7 +140,13 @@ window.onload = createAudio;
   	$(message).append( '<span class="user">' + data.header.user + '</span>' );
   	$(message).append( '<span class="body">' + data.body + '</span>' );
   	playSound();
-  	notify( data );
+
+
+  	if( $( document.body ).hasClass('hidden') ){
+	  	notify( data );
+  	}
+
+
 	$('.chat ul').append( message );
 	$('.chat')[0].scrollTop = $('.chat')[0].scrollHeight;
   }
@@ -107,8 +154,7 @@ window.onload = createAudio;
 	function connect(){
 		socket = io.connect('/');
 		channel = window.location.hash;
-		// var channel = window.location.pathname;
-		// http://nodejs.org/docs/v0.4.10/api/events.html#emitter.removeListener
+
 		socket.removeAllListeners();
   		socket.on(channel, chatListener );
   		socket.on('announcements', announcementsListener );
@@ -121,7 +167,9 @@ window.onload = createAudio;
 	}
 
 	window.onhashchange = function(){
+		$('.chat ul').empty();
 		connect();
+
 	}
 
 	connect();
